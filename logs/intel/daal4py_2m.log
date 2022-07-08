@@ -1,0 +1,18 @@
+INFO:__main__:Reading the dataset from intel_python/data_2000000.pkl...
+INFO:__main__:XGBoost training time (seconds): 175.105088
+INFO:__main__:XGBoost training time (seconds): 175.105090
+INFO:__main__:XGBoost inference time (seconds): 0.452591
+INFO:__main__:DAAL conversion time (seconds): 0.518115
+INFO:__main__:38916
+INFO:__main__:DAAL inference time (seconds): 0.268130
+INFO:__main__:XGBoost errors count: 38916
+INFO:__main__:XGBoost accuracy: 0.922168
+INFO:__main__:
+Daal4py errors count: 38916
+INFO:__main__:Daal4py accuracy: 0.922168
+INFO:__main__:
+XGBoost Prediction Time: 0.452591
+INFO:__main__:
+daal4py Prediction Time: 0.268130
+INFO:__main__:daal4py time improvement relative to XGBoost: 0.407567
+INFO:__main__:Accuracy Difference 0.000000

@@ -1,0 +1,11 @@
+name: stock_python
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip=21.2.4
+  - pip:
+    - xgboost==0.81
+    - pandas==1.4.2
+    - scikit-learn==1.0.2
