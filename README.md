@@ -24,15 +24,15 @@ Intel® oneAPI is used to achieve quick results even when the data for a model a
     - [Running training and prediction with hyperparameter tuning](#Running-training-and-prediction-with-hyperparameter-tuning)
 
 ## Purpose
-Predictive asset maintenance solutions of huge scale typically require operating across multiple hardware architectures. Accelerating training for the ever-increasing size of datasets and machine learning models is a major challenge while adopting AI. 
+This GitHub repository focuses on demonstrating the performance improvement achieved by utilizing the Intel® oneAPI AI Analytics Toolkit (oneAPI) compared to the stock version of the same packages, particularly for XGBoost. The objective is to address the challenges faced in predictive asset analytics solutions that operate at a large scale and across multiple hardware architectures while adopting AI.
 
-In this reference kit, we highlight the performance gain while using Intel® oneAPI AI Analytics Toolkit (oneAPI) over stock version of the same packages, especially for XGBoost. We generate datasets of given row size for a predictive asset maintenance analytics usecase and store it in ‘. pkl’ format; these data are then split for training and testing, where we train our model built on the XGBoost algorithm and predict test data. The time required to generate the data, train the model, convert the model, predict test data, and test accuracy of the predictions are captured for multiple runs on both the stock version and the oneAPI version of XGBoost. 
+The reference kit showcases the performance gain through various steps. It involves generating datasets of specified row size for a predictive asset maintenance analytics use case and storing them in the '.pkl' format. These datasets are then split for training and testing purposes. The model is trained using the XGBoost algorithm and predictions are made on the test data. The time taken for data generation, model training, model conversion, prediction of test data, and the accuracy of the predictions are measured for multiple runs using both the stock version and the oneAPI version of XGBoost.
 
-One of the important problem statement on this industrial scenario is to improve the MLOps time for developing and deploying new models due to its ever-increasing size of datasets over a period of time. XGBoost classifier with HIST tree method has been choosen to address this problem which will improve the overall training/tuning and validation time.
+A key challenge in this industrial scenario is to improve MLOps time for developing and deploying new models, given the constant increase in dataset sizes over time. To tackle this, the XGBoost classifier with the HIST tree method has been selected, aiming to enhance overall training, tuning, and validation time.
 
-Industrial scenario for predictive asset maintenance, with huge set of batch processing, requires fast prediction time without accuracy lose. daal4py is suitable for this xgboost machine learning model to achive this criteria.
+In the context of predictive asset analytics, where batch processing plays a significant role, the focus is on achieving fast prediction time without compromising accuracy. The daal4py framework is well-suited for this XGBoost machine learning model, enabling the fulfillment of this criterion.
 
-With Intel® enhancements in this machine learning model and daal4py framework, we do not need to go with higher cost MLOps environment as it provides huge gain even on the CPU based hardware.
+With the Intel® enhancements incorporated into this machine learning model and the daal4py framework, there is no need for costly MLOps environments, as substantial performance gains can be achieved even on CPU-based hardware. This repository aims to showcase the benefits and potential of these technologies in the industrial context.
 
 This document covers three parts of analysis as given below.
 - [Environment setup and analyse training time performance for Intel® oneAPI XGBoost](#analysis-on-intel®-oneapi-xgboost)
@@ -351,4 +351,4 @@ INFO:__main__:Accuracy Difference 0.000000
 > No accuracy drop observed with the daal4py prediction
 
 ### Conclusion
-Predictive asset maintenance solutions of huge scale typically require acceleration in training and prediction for the ever-increasing size of datasets without changing the existing computing resources in order to make their solutions feasible and economically attractive for Utility customers. This reference kit implementation provides performance-optimized guide around utility asset maintenance use cases that can be easily scaled across similar use cases.
+Predictive asset analytics solutions of huge scale typically require acceleration in training and prediction for the ever-increasing size of datasets without changing the existing computing resources in order to make their solutions feasible and economically attractive for Utility customers. This reference kit implementation provides performance-optimized guide around utility asset analytics use cases that can be easily scaled across similar use cases.
