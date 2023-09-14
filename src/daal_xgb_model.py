@@ -18,11 +18,9 @@ import sys
 import numpy as np
 import pandas as pd
 import xgboost as xgb
-
+import daal4py as d4p
 from sklearn.model_selection import train_test_split
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-warnings.filterwarnings("ignore")
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-f',
@@ -31,18 +29,21 @@ parser.add_argument('-f',
                     required=False,
                     default='data_25000.pkl',
                     help='input pkl file name')
-parser.add_argument('-stock',
-                    '--stock-xgb',
-                    type=int,
-                    required=False,
-                    default=0,
-                    help='use 1 for stock environment')
+parser.add_argument('-d',
+                    '--debug',
+                    action='store_true',
+                    help='changes logging level from INFO to DEBUG')
+
 FLAGS = parser.parse_args()
 
-if FLAGS.stock_xgb == 0:
-    # Stock environment daal4py inferencing is not done
-    # pylint: disable=import-error
-    import daal4py as d4p  # noqa: F811
+if FLAGS.debug:
+    logging_level=logging.DEBUG
+else:
+    logging_level=logging.INFO
+
+logging.basicConfig(level=logging_level)
+logger = logging.getLogger(__name__)
+warnings.filterwarnings("ignore")
 
 start = time.time()
 logger.info('Reading the dataset from %s...', FLAGS.file)
@@ -98,7 +99,6 @@ left = [1]
 rounded_train_time = round(total_train_time, 5)
 
 tick_label = ['XGBoost Training Model']
-logger.info('XGBoost training time (seconds): %f', rounded_train_time)
 
 # XGBoost prediction (for accuracy comparison)
 xgb_start_time = time.time()
@@ -108,10 +108,6 @@ xgb_total = time.time() - xgb_start_time
 xgb_errors_count = np.count_nonzero(xgb_prediction - np.ravel(y_test))
 
 logger.info('XGBoost inference time (seconds): %f', xgb_total)
-
-if FLAGS.stock_xgb == 1:
-    #  just measure only xgboost inference time for benchmarking
-    sys.exit()
 
 
 # pylint: disable=too-many-branches
@@ -265,7 +261,7 @@ daal_prediction = daal_predict_algo.compute(X_test, daal_model)
 d4p_total = time.time() - daal_start_time
 
 daal_errors_count = np.count_nonzero(daal_prediction.prediction[:, 0] - np.ravel(y_test))
-logger.info(daal_errors_count)
+#logger.info(daal_errors_count)
 
 logger.info('DAAL inference time (seconds): %f', d4p_total)
 
@@ -273,12 +269,12 @@ logger.info("XGBoost errors count: %d", xgb_errors_count)
 xgb_acc = abs((xgb_errors_count / xgb_prediction.shape[0]) - 1)
 logger.info("XGBoost accuracy: %f", xgb_acc)
 
-logger.info("\nDaal4py errors count: %d", daal_errors_count)
+logger.info("Daal4py errors count: %d", daal_errors_count)
 d4p_acc = abs((daal_errors_count / xgb_prediction.shape[0]) - 1)
 logger.info("Daal4py accuracy: %f", d4p_acc)
 
-logger.info("\nXGBoost Prediction Time: %f", xgb_total)
-logger.info("\ndaal4py Prediction Time: %f", d4p_total)
+logger.info("XGBoost Prediction Time: %f", xgb_total)
+logger.info("daal4py Prediction Time: %f", d4p_total)
 
 # Performance - Prediction Time
 rounded_xgb = round(xgb_total, 4)

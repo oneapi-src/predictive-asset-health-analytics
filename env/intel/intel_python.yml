@@ -1,7 +1,0 @@
-name: intel_python
-channels:
-  - conda-forge
-  - intel
-dependencies:
-  - intelpython3_full
-  - pip=21.2.4

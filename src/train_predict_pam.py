@@ -17,10 +17,6 @@ import numpy as np
 import xgboost as xgb
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
-    warnings.filterwarnings("ignore")
-
     # Data size
     parser = argparse.ArgumentParser()
     parser.add_argument('-f',
@@ -47,30 +43,36 @@ if __name__ == "__main__":
                         required=False,
                         default=2,
                         help='cross validation iteration')
-    parser.add_argument('-patch',
-                        '--patch-sklearn',
-                        type=str,
-                        required=False,
-                        default='0',
-                        help='sklearn patching with intel sklearnex (0/1)')
     parser.add_argument('-ncpu',
                         '--num-cpu',
                         type=int,
                         required=True,
                         default=4,
-                        help='Number of cpu cores: \
-                            xgboost v0.81 does not use nthread as number of cores,\
-                            hence need to align that explicitly using this parameter')
+                        help='number of cpu cores, default 4')
+    parser.add_argument('-d',
+                    '--debug',
+                    action='store_true',
+                    help='changes logging level from INFO to DEBUG')
+
     FLAGS = parser.parse_args()
+
+    if FLAGS.debug:
+        logging_level=logging.DEBUG
+    else:
+        logging_level=logging.INFO
+
+    logging.basicConfig(level=logging_level)
+    logger = logging.getLogger(__name__)
+    warnings.filterwarnings("ignore")
+
     pkg = FLAGS.package
     cv_val = FLAGS.cross_validation
     TUNING = False
     if FLAGS.tuning == "1":
         TUNING = True
 
-    if FLAGS.patch_sklearn == "1":
-        from sklearnex import patch_sklearn
-        patch_sklearn()
+    from sklearnex import patch_sklearn
+    patch_sklearn()
 
     from sklearn.model_selection import GridSearchCV
     from sklearn.model_selection import train_test_split
@@ -131,14 +133,11 @@ if __name__ == "__main__":
     def fit_xgb_model(x_data, y_data):
         """Use a XGBClassifier for this problem."""
         # prepare data for xgboost training
-        dtrain = xgb.DMatrix(x_data, y_data)
+        dtrain = xgb.DMatrix(x_data, y_data, nthread=FLAGS.num_cpu)
         label = dtrain.get_label()
         ratio = float(np.sum(label == 0)) / np.sum(label == 1)
         # Set xgboost parameters
-        parameters = {'scale_pos_weight': ratio.round(2), 'tree_method': 'hist'}
-
-        if FLAGS.patch_sklearn == "0":
-            parameters['nthread'] = FLAGS.num_cpu
+        parameters = {'scale_pos_weight': ratio.round(2), 'n_jobs': FLAGS.num_cpu, 'tree_method': 'hist'}
 
         # define the model to use
         if TUNING is False:
@@ -161,7 +160,9 @@ if __name__ == "__main__":
     tstart = time.time()
     xgb_model = fit_xgb_model(X_train_scaled_transformed, y_train)
     ttime = time.time() - tstart
+    
     if TUNING is True:
+        logger.info("Starting hyper parameter tuning:")
         # GridSearchCV
         def timer(start_time=None):  # pylint: disable=missing-function-docstring
             if not start_time:
@@ -175,25 +176,20 @@ if __name__ == "__main__":
             return 0
 
         # Hyper parameters for tuning
+        # n_jobs should be used according to the underlying HW accelerators, hence -1 is given
         params = {
             'min_child_weight': [1, 5, 10],
             'gamma': [0.5, 1, 1.5, 2, 5],
             # 'subsample': [0.6, 0.8, 1.0],
             # 'colsample_bytree': [0.6, 0.8, 1.0],
             'max_depth': [3, 4, 5],
+            'n_jobs': [-1]
             # 'learning_rate': [0.001, 0.01]
             }
 
-        # n_jobs should be used according to the underlying HW accelerators, hence -1 is given
-        random_search = GridSearchCV(xgb_model, param_grid=params, cv=cv_val, verbose=10, n_jobs=-1)
+        xgb_model = GridSearchCV(xgb_model, param_grid=params, cv=cv_val, verbose=10)
+        xgb_model.fit(X_train_scaled_transformed, y_train)
 
-        # Here we go
-        starttime = timer(None)  # timing starts from this point for "starttime" variable
-        random_search.fit(X_train_scaled_transformed, y_train)
-        timer(starttime)
-
-    # XGBoost vanilla prediction (for accuracy comparison)
-    dtest = xgb.DMatrix(X_test_scaled_transformed, y_test)
     pstart = time.time()
     xgb_prediction = xgb_model.predict(X_test_scaled_transformed)
     ptime = time.time() - pstart
@@ -205,9 +201,9 @@ if __name__ == "__main__":
 
     etime = time.time() - start
     accuracy_scr = 1 - xgb_errors_count / xgb_prediction.shape[0]
-    logger.info('=====> Time taken %f secs \
-                for training and prediction for the data size of %s',
-                etime, datasize)
+    sys.stdout.flush()
+    sys.stderr.flush()
+    logger.info('=====> Total Time: %f secs for data size %s', etime, datasize)
     logger.info('=====> Training Time %f secs', ttime)
     logger.info('=====> Prediction Time %f secs', ptime)
     logger.info('=====> XGBoost accuracy score %f', accuracy_scr)

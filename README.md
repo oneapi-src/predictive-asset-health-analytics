@@ -1,118 +1,133 @@
-# **XGBoost Predictive Asset Maintenance**
-Intel® oneAPI is used to achieve quick results even when the data for a model are huge. It provides the capability to reuse the code present in different languages so that the hardware utilization is optimized to provide these results.
+# XGBoost* Predictive Asset Maintenance
 
-| Platform                          | Microsoft Azure: Standard_D8s_v5 (IceLake)<br>Ubuntu 20.04
-| :---                              | :---
-| Hardware                          | Intel IceLake CPU
-| Software                          | Intel® oneAPI AI Analytics Toolkit, xgboost, scikit-learn, pandas, daal4py
-| What you will learn               | Intel® oneAPI performance advantage over the stock versions
+## Introduction
+Create an end-to-end predictive asset maintenance solution to predict defects and anomalies before they happen with XGBoost* from [Intel® oneAPI AI Analytics Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html) (oneAPI). Check out more workflow examples in the [Developer Catalog](https://developer.intel.com/aireferenceimplementations).
 
-# Contents
- - [Purpose](#purpose)
- - [Analysis on Intel® oneAPI XGBoost](#analysis-on-intel®-oneapi-xgboost)
-    - [Framework Setup](#framework-setup)
-    - [Activate conda environment](#activate-conda-environment)
-    - [Run the code for test dataset generation, training the model and prediction](#run-the-code-for-test-dataset-generation-training-the-model-and-prediction)
-    - [Observations](#observations)
- - [Analysis on XGBoost with oneDAL Python Wrapper (daal4py) model](#analysis-on-xgboost-with-onedal-python-wrapper-daal4py-model)
-    - [Activate conda environment for stock version](#activate-conda-environment-1)
-    - [Run the code to generate random data](#run-the-code-to-generate-random-data)
-    - [Training the model and predicting the results for test data](#training-the-model-and-predicting-the-results-for-test-data)
-    - [Observations](#observations-1)
- - [Appendix](#appendix)
-    - [Generating the test dataset](#Generating-the-test-dataset)
-    - [Running training and prediction with hyperparameter tuning](#Running-training-and-prediction-with-hyperparameter-tuning)
+## Solution Technical Overview
 
-## Purpose
-Predictive asset maintenance solutions of huge scale typically require operating across multiple hardware architectures. Accelerating training for the ever-increasing size of datasets and machine learning models is a major challenge while adopting AI. 
+Predictive asset maintenance is a method that uses data analysis tools to predict defects and anomalies before they happen. Solutions of huge scale typically require operating across multiple hardware architectures. Accelerating training for the ever-increasing size of datasets and machine learning models is a major challenge while adopting AI (Artificial Intelligence).
 
-In this reference kit, we highlight the performance gain while using Intel® oneAPI AI Analytics Toolkit (oneAPI) over stock version of the same packages, especially for XGBoost. We generate datasets of given row size for a predictive asset maintenance analytics usecase and store it in ‘. pkl’ format; these data are then split for training and testing, where we train our model built on the XGBoost algorithm and predict test data. The time required to generate the data, train the model, convert the model, predict test data, and test accuracy of the predictions are captured for multiple runs on both the stock version and the oneAPI version of XGBoost. 
+For an industrial scenario is important to improve the MLOps (Machine Learning Operations) time for developing and deploying new models, this could be challenging due to the ever-increasing size of datasets over a period of time. XGBoost* classifier with HIST tree method addresses this problem improving the overall training/tuning and validation time. A model with a huge set of batch processing requires fast prediction time with a low accuracy lose, daal4py helps the XGBoost* machine learning model to achieve this criteria.
 
-One of the important problem statement on this industrial scenario is to improve the MLOps time for developing and deploying new models due to its ever-increasing size of datasets over a period of time. XGBoost classifier with HIST tree method has been choosen to address this problem which will improve the overall training/tuning and validation time.
+The solution contained in this repo uses the following Intel® packages:
 
-Industrial scenario for predictive asset maintenance, with huge set of batch processing, requires fast prediction time without accuracy lose. daal4py is suitable for this xgboost machine learning model to achive this criteria.
+* ***Intel® Distribution for Python****
 
-With Intel® enhancements in this machine learning model and daal4py framework, we do not need to go with higher cost MLOps environment as it provides huge gain even on the CPU based hardware.
+  The [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z) provides:
 
-This document covers three parts of analysis as given below.
-- [Environment setup and analyse training time performance for Intel® oneAPI XGBoost](#analysis-on-intel®-oneapi-xgboost)
-- [Environment setup and analyse XGBoost and DAAL model inferencing](#analysis-on-xgboost-with-daal-model)
+    * Scalable performance using all available CPU cores on laptops, desktops, and powerful servers
+    * Support for the latest CPU instructions
+    * Near-native performance through acceleration of core numerical and machine learning packages with libraries like the Intel® oneAPI Math Kernel Library (oneMKL) and Intel® oneAPI Data Analytics Library
+    * Productivity tools for compiling Python code into optimized instructions
+    * Essential Python bindings for easing integration of Intel® native tools with your Python* project
 
-## Key Implementation Details 
-This sample code is implemented for CPU using the Python language.
+* ***Intel® Distribution of Modin****
 
-### Packages
+    Modin* is a drop-in replacement for pandas, enabling data scientists to scale to distributed DataFrame processing without having to change API code. [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html) adds optimizations to further accelerate processing on Intel hardware.
 
-| **Package**                | **Stock Python**                | **Intel® Python**
-| :---                       | :---                            | :---
-| python                     | 3.9.12                          | 2022.0.0=py39_0
-| pandas                     | 1.4.2                           | 1.2.5
-| scikit-learn               | 1.0.2                           | 0.24.2, scikit-learn-intelex 2021.5.1
-| xgboost                    | 0.81                            | 1.4.3
-| daal4py                    | NA                              | 2021.6.0
+For more details, visit [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z), [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html), the [XGBoost* Predictive Asset Maintenance](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) GitHub repository, the [XGBoost* documentation webpage](https://xgboost.readthedocs.io/en/stable/) and the [daal4py documentation webpage](https://intelpython.github.io/daal4py/).
 
-> **Notes**
-Intel has been working with XGBoost maintainers to optimize XGBoost with oneDAL optimizations **after xgb 0.81**. XGBoost versions above 1.x has the most optimizations, choosing the latest version available at the time of this experiment, **XBG 1.4.3**<br>
-This experiment has been tested on the Intel distribution for scikit-learn 0.24.2 that is fully validated on the latest Intel extension sklearn 2021.5.1. However, Intel extension for scikit-learn is expected to run on versions >=0.24 but may or may not have been fully validated on the latest sklearn versions
+## Validated Hardware Details 
 
-### **Use Case E2E flow**
+[Intel® oneAPI](https://www.intel.com/content/www/us/en/developer/tools/oneapi/overview.html#gs.52tat6) is used to achieve quick results even when the data for a model are huge. It provides the capability to reuse the code present in different languages so that the hardware utilization is optimized to provide these results.
+
+| Recommended Hardware
+| ----------------------------
+| CPU: Intel® 2th Gen Xeon® Platinum 8280 CPU @ 2.70GHz or higher
+| RAM: 187 GB
+| Recommended Free Disk Space: 20 GB or more
+
+Code was tested on Ubuntu\* 22.04 LTS.
+
+## How it Works
+
+This reference kit generates datasets of given row size for a predictive asset maintenance analytics use-case and stores it in ‘. pkl’ format. The data is splitted into two subsets, the first subset will train the XGBoost* model and the second will be use to test the model's prediction capabilities.
+
+The below diagram presents the different stages that compose the end-to-end workflow.
+
 ![Use_case_flow](assets/predictive_asset_maintenance_e2e_flow.png)
 
-### Prerequistes
-[Anaconda installation](https://docs.anaconda.com/anaconda/install/linux/)
 
-## **Analysis on Intel® oneAPI XGBoost**
-This codebase provides the framework for running the test dataset of various sizes using the Python data manipulation package Pandas. Also, it provides the framework for tuning the data model training with XGBoost hyperparameters for various datasize analysis.
+## Get Started
+Start by defining an environment variable that will store the workspace path, these directories will be created in further steps and will be used for all the commands executed using absolute paths. Define `DIR` by setting the ENVVAR to the desired directory where the `WORKSPACE` will be stored.
 
-### Framework Setup
-The conda yaml dependencies are kept in the folder `./env/`.
+```bash
+export DIR=</path/to/myworkspace/directory>
+export WORKSPACE=$DIR/predictive-health-analytics
+export DATA_DIR=$WORKSPACE/data
+export OUTPUT_DIR=$WORKSPACE/output
+```
+### Download the Workflow Repository
+Create a working directory for the workflow and clone the [Main
+Repository](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) repository into your working
+directory.
 
-| **YAML file**                 | **Configuration**
+```bash
+mkdir -p $WORKSPACE && cd $WORKSPACE
+git clone https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics.git $WORKSPACE
+mkdir -p $DATA_DIR $OUTPUT_DIR/logs
+```
+### Set Up Conda
+To learn more, please visit [install anaconda on Linux](https://docs.anaconda.com/free/anaconda/install/linux/). 
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+
+### Set Up Environment
+The conda yaml dependencies are kept in `$WORKSPACE/env/intel_env.yml`.
+
+| **Packages required in YAML file:**                 | **Version:**
 | :---                          | :--
-| `env/stock/stock_python.yml`  | Stock Python=3.9.x environment setup with pandas, xgboost, scikit-learn packages
-| `env/intel/intel_python.yml`  | Intel® oneAPI Python distribution
+| `python`  | 3.9
+| `intelpython3_full`  | 2023.2.0 
+| `modin-all`  | 0.23.0
 
-Conda environment setup for stock python distribution
-```sh
-conda env create -f env/stock/stock_python.yml
-```
-Conda environment setup for Intel® python distribution
-```sh
-conda env create -f env/intel/intel_python.yml
-```
-
-Environment setup for each distribution is required only once. This step does not cleanup the existing environment with the same name hence we need to make sure there is no conda environment exists with the same name. During this setup a new conda environment will be created with the dependencies listed in the YAML configuration.
-
-#### Activate conda environment
-Once the appropriate environment is created with the previous step then it has to be activated using the conda command as given below
-```sh
-conda activate <environment name>
+Follow the next steps for Intel® Python* Distribution setup inside conda environment:
+```bash
+# If the user wants to set libmamba as conda's default solver 
+# for base environment, run the following two lines; if not
+# continue executing from to line number 3. Newer versions of 
+# Anaconda have libmamba already installed and will be the default
+# solver in September 2023.
+conda install -n base conda-libmamba-solver
+conda config --set solver libmamba
+conda env create -f $WORKSPACE/env/intel_env.yml
 ```
 
-#### Run the code for test dataset generation, training the model and prediction
-> Before running the test, we need to ensure that the appropriate conda environment is activated.
+Environment setup is required only once. This step does not cleanup the existing environment with the same name; make sure no conda environment exists with the same name. During this setup a new conda environment will be created with the dependencies listed in the YAML configuration.
 
-The below bash script need to be executed to start creating the test dataset and training the model using pandas / modin.
-```sh
-bash ./run_dataset.sh
+Once the appropriate environment is created with the previous step then it has to be activated using the conda command as given below:
+```bash
+conda activate predictive_maintenance_intel
 ```
 
-Below are the options which needs to be used for running the test execution.
+## Supported Runtime Environment
+You can execute the references pipelines using the following environments:
+* Bare Metal
+* Jupyter Notebook
+* Docker*
 
-> **Please Note:** Intel® Distribution of Modin package is not used as part of this benchmark analysis
+---
+### Run Using Bare Metal
+Follow these instructions to set up and run this workflow on your own development system. For running a provided Docker* image with Docker*, see the [Docker* instructions](#run-using-docker)
 
+#### Set Up System Software
+Our examples use the `conda` package and environment on your local computer. If you don't already have `conda` installed or the `conda` environment created, go to [Set Up Conda*](#set-up-conda) or see the [Conda* Linux installation instructions](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html).
+
+
+#### Run Workflow
+The below bash script, located in ```$WORKSPACE```, needs to be executed to start creating the test dataset and training the model using pandas/modin. 
+```sh
+bash $WORKSPACE/run_dataset.sh
+```
 | **Option** | **Values**
 | :--        | :--
 | Dataset Size | `25K to 10M`
 | Hyperparameter tuning | `notuning` - Training without hyperparameter tuning<br>`hyperparametertuning` - Training with hyperparameter tuning
-| XGBoost version | `stock` - Using Stock distribution v0.81<br>`intel` - Using Intel® XGBoost distribution v1.4.3
 | Number of CPU cores | Based on the total number of cores available on the execution environment
 
-> Note: Hyperparameter tuning option is not validated in this release
-
-This stage invokes two python scripts to generate the test dataset with the chosen size and to train the model with selected data package library. The data generation process will create a folder with the name of the active conda environment wherein all the datset and the log files will be captured. The dataset file will be saved in pickle format and it will be reused in further test runs on this same environment for the same dataset size.
-
-For the `Select xgboost distribution option`, select the name of the active conda environment.
+This stage invokes two python scripts to generate the test dataset with the chosen size and to train the model with selected data package library. The data generation process will create a folder with the name of the active conda environment; all the dataset and the log files will be captured. The dataset file will be saved in pickle format and it will be reused in further test runs on this same environment for the same dataset size.
 
 Example option selection for Pandas with 1M dataset size as given below
 
@@ -132,62 +147,41 @@ Select dataset size: 6
         0. notuning
         1. hyperparametertuning
 Select tuning option: 0
-        0. stock
-        1. intel
-Select xgboost distribution option: 1
 Number of CPU cores to be used for the training: 8
 ```
 
-Log file will be generated in the below location, relative to the script folder.
+Log file will be generated in the below location:
+```bash
+$OUTPUT_DIR/logs/logfile_pandas_<dataset_size>_<timestamp>.log
+$OUTPUT_DIR/logs/logfile_train_predict_<dataset_size>_<timestamp>.log
 ```
-./<environment-name>/logfile_<data-package-name>_<dataset-size>_timestamp.log
+Test data pickle file will be generated in the below location:
+```bash
+$DATA_DIR/data_<dataset_size>.pkl
 ```
-Test data pickle file will be generated in the below location, relative to the script folder.
-```
-./<environment-name>/data_<dataset-size>.pkl
-```
+Alternatively, user can run `generate_data_pandas.py` and `train_predict_pam.py` scripts, described below, instead of `run_dataset.sh`; running each Python script independently provides more options for the user to experiment. `generate_data_pandas.py` will automatically create the dataset and, `train_predict_pam.py` will run train and prediction with the previously generated dataset.
 
-> **NOTE:**<br>Dataset pickle file will be generated only once per environment.<br>Training script will be executed twice in case of `notuning` option in order to pickup the efficient time. It has been noticed sometimes the first execution may take little more time due to python runtime warmup.
+The dataset generation script uses the following optional arguments:
 
-Sample logfile which catures the training and prediction performance
-```
-+++++++++++++++++++++++++++++++++Iteration1++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO:__main__:Reading the dataset from ./intel_xgboost_pandas/data_1000000.pkl...
-INFO:__main__:=====> Time taken 28.960631132125854 secs for training and prediction for the data size of (1000000, 34)
-INFO:__main__:=====> Training Time 27.993483781814575 secs
-INFO:__main__:=====> Prediction Time 0.09821820259094238 secs
-INFO:__main__:=====> XGBoost accuracy score 0.92238
-INFO:__main__:DONE
-+++++++++++++++++++++++++++++++++Iteration2++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO:__main__:Reading the dataset from ./intel_xgboost_pandas/data_1000000.pkl...
-INFO:__main__:=====> Time taken 28.985554695129395 secs for training and prediction for the data size of (1000000, 34)
-INFO:__main__:=====> Training Time 28.034034729003906 secs
-INFO:__main__:=====> Prediction Time 0.10062217712402344 secs
-INFO:__main__:=====> XGBoost accuracy score 0.921812
-INFO:__main__:DONE
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-```
-
-> Without using the bash script below mentioned scripts can also be used separately to perform the benchmarking
-
-##### Generating the test dataset
-Below python script may also be executed independently with the parameters provided below for generating the test dataset with the active environment.
-```
+```bash
 usage: src/generate_data_pandas.py [-h] [-s SIZE] [-f FILE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -s SIZE, --size SIZE  data size which is number of rows
   -f FILE, --file FILE  output pkl file name
+  -d, --debug           Changes logging level from INFO to DEBUG
 ```
 
-For example, below command should generate the dataset of 25k rows.
+For example, below command should generate the dataset of 25k rows and saves the log file.
+```bash
+export DATASIZE=25000
+export OF=$OUTPUT_DIR/logs/logfile_pandas_${DATASIZE}_$(date +%Y%m%d%H%M%S).log 
+python $WORKSPACE/src/generate_data_pandas.py -s ${DATASIZE} -f $DATA_DIR/dataset_${DATASIZE}.pkl 2>&1 | tee $OF
+echo "Logfile saved: $OF"
 ```
-python src/generate_data_pandas.py -s 25000 -f dataset_25000.pkl
-```
-##### Running training and prediction
-Below python script may also be executed independently with the parameters provided below for running the training and prediction along with hyperparameter turning.
-```
+Training and prediction along with hyperparameter turning can also be executed independently with the following arguments:
+```bash
 usage: src/train_predict_pam.py [-h] [-f FILE] [-p PACKAGE] [-t TUNING] [-cv CROSS_VALIDATION] [-patch PATCH_SKLEARN]
                             -ncpu NUM_CPU
 
@@ -200,155 +194,204 @@ optional arguments:
                         hyper parameter tuning (0/1)
   -cv CROSS_VALIDATION, --cross-validation CROSS_VALIDATION
                         cross validation iteration
-  -patch PATCH_SKLEARN, --patch-sklearn PATCH_SKLEARN
-                        sklearn patching with intel sklearnex (0/1)
   -ncpu NUM_CPU, --num-cpu NUM_CPU
-                        Number of cpu cores: xgboost v0.81 does not use nthread as number of cores, hence need to
-                        align that explicitly using this parameter
+                        number of cpu cores, default 4.
+  -d, --debug           
+                        changes logging level from INFO to DEBUG
 ```
-For example, below command should take the 25k dataset pkl file generated using the steps given in the above [section](#generating-the-test-dataset) and perform the training and prediction using XGBoost Classifier algorithm.
-> NOTE: Assuming the execution environment is based on 8 core cpu hardware
-```sh
-python src/train_predict_pam.py -f dataset_25000.pkl -ncpu 8
-```
-In case of Intel® python conda environment the scikit-learn patch can be applied using the below additional parameter.
-```sh
-python src/train_predict_pam.py -f dataset_25000.pkl -ncpu 8 -patch 1
-```
-
-### Observations
-
-#### XGBoost Comparison
-This section analyzes the time to complete for the following tasks using the stock XGBoost algorithm: training, and prediction. Total two runs per task and the average of that have been considered here. All the tests are conducted on Azure Standard_D8s_v5 (Icelake) environment. Additionally, the accuracy for each run of prediction model is shown. The first datapoint is for the smallest data size of 25,000, increasing to the largest data size of 10,000,000. The data size progression goes as follows: 25k -> ... -> 10M.
-
-Default Hyperparameters used for Stock xgboost
-
-        'base_score': 0.5, 
-        'booster': 'gbtree', 
-        'colsample_bylevel': 1, 
-        'colsample_bytree': 1, 
-        'gamma': 0, 
-        'learning_rate': 0.1, 
-        'max_delta_step': 0, 
-        'max_depth': 3, 
-        'min_child_weight': 1, 
-        'missing': None, 
-        'n_estimators': 100, 
-        'nthread’: 8, 
-        'objective': 'binary:logistic', 
-        'reg_alpha': 0, 
-        'reg_lambda': 1, 
-        'scale_pos_weight': 1.5, 
-        'seed': 0, 
-        'silent': 1, 
-        'subsample': 1, 
-        'use_label_encoder': False, 
-        'eval_metric': 'logloss'
-
-Default Hyperparameters used for Intel optimized xgboost
-
-        'objective': 'binary:logistic', 
-        'base_score': 0.5, 
-        'booster': 'gbtree', 
-        'colsample_bylevel': 1, 
-        'colsample_bynode': 1, 
-        'colsample_bytree': 1, 
-        'gamma': 0, 
-        'gpu_id': -1, 
-        'learning_rate': 0.300000012, 
-        'max_delta_step': 0, 
-        'max_depth': 6, 
-        'min_child_weight': 1, 
-        'monotone_constraints': '()', 
-        'n_jobs': 8, 
-        'num_parallel_tree': 1, 
-        'random_state': 0, 
-        'reg_alpha': 0, 
-        'reg_lambda': 1, 
-        'scale_pos_weight': 1.51, 
-        'subsample': 1, 
-        'tree_method': 'exact', 
-        'validate_parameters': 1, 
-        'verbosity': None, 
-        'eval_metric': 'logloss'
-
-![image](assets/xgboost_trainingtime_graph.png)
-<br>**Key Takeaway**<br>Intel optimizations available in XGBoost 1.4.3 offers training time speed-up is nearly 1.37x compared to stock XGBoost 0.81 with default hyperparameters on this dataset
-
-![image](assets/xgboost_predictiontime_graph.png)
-<br>**Key Takeaway**<br>Intel optimizations available in XGBoost 1.4.3 offers prediction  time speed-up ranging between 1.62x and 1.70x  compared to stock XGBoost 0.81 with default hyperparameters on this dataset
-
-## **Analysis on XGBoost with oneDAL Python Wrapper (daal4py) model**
-In order to gain even further improved performance on prediction time for the xgboost trained machine learning model, it can be converted to a daal4py model. daal4py makes xgboost machine learning algorithm execution faster to gain better performance on the underlying hardware by utilizing the Intel® oneAPI Data Analytics Library (oneDAL).
-
-Below are the training parameters used on the base xgboost trained model, for this evaluation
-
-      'max_bin': 256,
-      'scale_pos_weight': 2,
-      'lambda_l2': 1,
-      'alpha': 0.9,
-      'max_depth': 8,
-      'num_leaves': 2**8,
-      'verbosity': 0,
-      'objective': 'multi:softmax',
-      'learning_rate': 0.3,
-      'num_class': 5,
-
-### Activate conda environment
-Use the following command to activate the python distribution environment that was created:
-
-```
-conda activate (env_name)
+For example, below command should take the 25k dataset pkl file generated in the previous example and perform the training and prediction using XGBoost* classifier algorithm.
+```bash
+export PACKAGE="pandas"
+export TUNING=0
+export NCPU=20
+export CROSS_VAL=4
+export OF=$OUTPUT_DIR/logs/logfile_train_predict_${DATASIZE}_$(date +%Y%m%d%H%M%S).log 
+python $WORKSPACE/src/train_predict_pam.py -f $DATA_DIR/dataset_${DATASIZE}.pkl -t $TUNING -ncpu $NCPU -p $PACKAGE -cv $CROSS_VAL | tee -a $OF 
+echo "Logfile saved: $OF"
 ```
 
-### Run the code to generate random data
-Run the following command to generate the dataset with the given row size
-```
-python src/generate_data_pandas.py -s 25000
-```
-Note: -s defines the data size. In this example we are choosing 25,000 but you can input a different data size as well. Runtimes will vary as data size increases or decreases.
+#### XGBoost* with oneDAL Python Wrapper (daal4py) model
+To gain even further improved performance on prediction time for the XGBoost* trained machine learning model, it can be converted to a daal4py model. daal4py makes XGBoost* machine learning algorithm execution faster to gain better performance on the underlying hardware by utilizing the Intel® oneAPI Data Analytics Library (oneDAL).
 
-> NOTE: A file with '.pkl' extension would have been generated with the name `asset_data.pkl` which can be used in further steps for training and prediction.
-
-### Training the model and predicting the results for test data
-A file with '.pkl' extension generated goes as the input for this Python file. Make sure the file 'daal-xgb_model.py' is present in the working directory.
-```
-usage: daal_xgb_model.py [-h] [-f FILE] [-stock STOCK_XGB]
+The previously generated pkl file is used as input for this Python script. 
+```bash
+usage: src/daal_xgb_model.py [-h] [-f FILE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -f FILE, --file FILE  input pkl file name
-  -stock STOCK_XGB, --stock-xgb STOCK_XGB
-                        use 1 for stock environment
+  -d, --debug           changes logging level from INFO to DEBUG
 ```
-> NOTE: For stock environment (-stock 1), only xgboost prediction has been performed for benchmark against daal4py model converted from intel xgboost.
+Run the following command to train the model with the given dataset, convert the same to daal4py format and measure the prediction time performance.
+```bash
+python $WORKSPACE/src/daal_xgb_model.py -f  $DATA_DIR/dataset_${DATASIZE}.pkl
+```
+#### Clean Up Bare metal
+Before proceeding to the cleaning process, it is strongly recommended to make a backup of the data that the user wants to keep. To clean the previously downloaded and generated data, run the following commands:
+```bash
+conda deactivate #Run line if predictive_maintenance_intel is active
+conda env remove -n predictive_maintenance_intel
+rm $OUTPUT_DIR $DATA_DIR $WORKSPACE -rf
+```
 
-Run the following command to train the model with the given dataset and convert the same to daal4py format and measure the prediction time performance.
-```sh
-python3 src/daal_xgb_model.py -f <pickle-file>
+---
+### Run Using Jupyter Notebook
+Before continuing steps described in [Get Started](#get-started).
+
+#### Create and activate conda environment
+To be able to run `Fraud_Detection_Notebook.ipynb` a conda environment must be created:
+```bash
+conda activate predictive_maintenance_intel
+conda install -c intel nb_conda_kernels jupyter notebook -y
+```
+Follow the steps in [Get Started](#get-started) section before continuing. Run the following command inside of the project root directory. ENVVARs must be set in the same terminal that will run Jupyter Notebook.
+```bash
+cd $WORKSPACE
+jupyter notebook
+```
+Open Jupyter Notebook in a web browser, select `PredictiveMaintenance.ipynb` and select `conda env:predictive_maintenance_intel` as the jupyter kernel. Now you can follow the notebook's instructions step by step.
+
+#### Clean Up Jupyter Notebook
+To clean Jupyter Notebook follow the instructions described in [Clean Up Bare Metal](#clean-up-bare-metal).
+
+---
+### Run Using Docker*
+Follow these instructions to set up and run our provided Docker* image.
+For running on bare metal, see the [bare metal instructions](#run-using-bare-metal)
+instructions.
+
+#### Set Up Docker Engine*
+You'll need to install **Docker Engine*** on your development system.
+Note that while **Docker Engine*** is free to use, **Docker Desktop*** may require
+you to purchase a license.  See the [Docker Engine Server* installation
+instructions](https://docs.docker.com/engine/install/#server) for details.
+
+#### Setup Docker* Compose
+Ensure you have Docker compose* installed on your machine. If you don't have this tool installed, consult the official [Docker* compose installation documentation](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually).
+
+```bash
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+docker compose version
 ```
 
-Sample output
+#### Set Up and Run Docker* Image
+In `docker` folder, there is a docker-compose file to build a container quickly and easily with everything necessary to be able to build Docker* containers. The following commands will build (if not already built) the Docker* containers and images declared in the compose file. Once the building process has ended, Docker* compose will run a container with an interactive shell session. Before trying to build the containers set the ENVVARS described in [Get Started](#get-started).
+```bash 
+cd $WORKSPACE/docker
+docker compose -p $USER build
+docker compose -p $USER run interactive
 ```
-INFO:__main__:Reading the dataset from intel-python/data_10000000.pkl...
-INFO:__main__:XGBoost training time (seconds): 1208.274390
-INFO:__main__:XGBoost inference time (seconds): 2.422618
-INFO:__main__:DAAL conversion time (seconds): 0.738738
-INFO:__main__:DAAL inference time (seconds): 0.982114
-INFO:__main__:XGBoost accuracy: 0.922012
-INFO:__main__:Daal4py accuracy: 0.922012
-INFO:__main__:daal4py time improvement relative to XGBoost: 0.594606
+Once inside the interactive shell session, the user can run the commands described in [Run Using Bare Metal](#run-using-bare-metal).
+
+#### Run Jupyter Notebook Server
+To connect to a Jupyter Notebook server and run our demonstrative notebook, build (if not already built) and run the provided Docker* image, as shown below. Before trying to build the containers set the ENVVARS described in [Get Started](#get-started) if the default exposed port needs to be changed, set the ENVVAR `PORT` to another value.
+```bash 
+cd $WORKSPACE/docker
+export PORT=8888
+docker compose -p $USER build
+docker compose -p $USER up jupyter_server
+```
+
+
+The output will be like:
+
+```bash
+To access the notebook, open this file in a browser:
+   file:///path/to/jupyter/notebook/server/open.html 
+Or copy and paste one of these URLs: 
+   http://*********:8888/?token=***************************************** 
+or http://127.0.0.1:8888/?token=*****************************************
+```
+
+Copy and paste the complete URL that starts with `http://127.0.0.1:8888` into a web browser to open the Jupyter Notebook Dashboard.
+
+Once in Jupyter, click on *`PredictiveMaintenance.ipynb`* to get an interactive demo of the workflow. Select conda `env:predictive_maintenance_intel` as the jupyter kernel. Now you can follow the notebook's instructions step by step.
+
+#### Clean Up Docker Containers*
+Stop containers created by Docker* compose and remove them.
+
+```bash
+cd $WORKSPACE/docker
+docker compose -p $USER down --remove-orphans
+```
+
+## Expected Output
+A successful execution of ```generate_data_pandas.py``` should return similar results as shown below:
+
+```
+INFO:__main__:Generating data with the size 25000
+INFO:__main__:changing Tele_Attatched into an object variable
+INFO:__main__:Generating our target variable Asset_Label
+INFO:__main__:Creating correlation between our variables and our target variable
+INFO:__main__:When age is 60-70 and over 95 change Asset_Label to 1
+INFO:__main__:When elevation is between 500-1500 change Asset_Label to 1
+INFO:__main__:When Manufacturer is A, E, or H change Asset_Label to have  95% 0's
+INFO:__main__:When Species is C2 or C5 change Asset_Label to have 90% to 0's
+INFO:__main__:When District is NE or W change Asset_Label to have 90% to 0's
+INFO:__main__:When District is Untreated change Asset_Label to have 70% to 1's
+INFO:__main__:When Age is greater than 90 and Elevaation is less than 1200              and Original_treatment is Oil change Asset_Label to have 90% to 1's
+INFO:__main__:=====> Time taken 0.049012 secs for data generation for the size of (25000, 34)
+INFO:__main__:Saving the data to /localdisk/aagalleg/frameworks.ai.platform.sample-apps.predictive-health-analytics/predictive-health-analytics/data/dataset_25000.pkl ...
+INFO:__main__:DONE
+```
+
+A successful execution of ```train_predict_pam.py``` should return similar results as shown below:
+
+```
+INFO:__main__:=====> Total Time:
+6.791231 secs for data size (800000, 34)
+INFO:__main__:=====> Training Time 3.459683 secs
+INFO:__main__:=====> Prediction Time 0.281359 secs
+INFO:__main__:=====> XGBoost accuracy score 0.921640
+INFO:__main__:DONE
+```
+
+A successful execution of ```daal_xgb_model.py``` should return similar results as shown below:
+
+```
+INFO:__main__:Reading the dataset from ./data/data_800000.pkl...
+INFO:root:sklearn.model_selection.train_test_split: running accelerated version on CPU
+INFO:root:sklearn.model_selection.train_test_split: running accelerated version on CPU
+INFO:__main__:XGBoost training time (seconds): 74.001453
+INFO:__main__:XGBoost inference time (seconds): 0.054897
+INFO:__main__:DAAL conversion time (seconds): 0.366412
+INFO:__main__:DAAL inference time (seconds): 0.017998
+INFO:__main__:XGBoost errors count: 15622
+INFO:__main__:XGBoost accuracy: 0.921890
+INFO:__main__:Daal4py errors count: 15622
+INFO:__main__:Daal4py accuracy: 0.921890
+INFO:__main__:XGBoost Prediction Time: 0.054897
+INFO:__main__:daal4py Prediction Time: 0.017998
+INFO:__main__:daal4py time improvement relative to XGBoost: 0.672158
 INFO:__main__:Accuracy Difference 0.000000
 ```
 
-### Observations
+## Summary and Next Steps
 
-![image](assets/daal4py_predictiontime_graph.png)
-<br>**Key Takeaways**
-- Intel optimizations available in XGBoost 1.4.3 offers prediction time speed-up ranging between 2.14x and 2.22x  compared to stock XGBoost 0.81 with XGBoost model trained with tuned hyperparameters on this dataset
-- Intel optimizations available in daal4py offers additional  prediction time speed-up, overall ranging between 2.94x to 3.75x compared to stock XGBoost 0.81 with XGBoost model trained with tuned hyperparameters on this dataset
-
-> No accuracy drop observed with the daal4py prediction
-
-### Conclusion
 Predictive asset maintenance solutions of huge scale typically require acceleration in training and prediction for the ever-increasing size of datasets without changing the existing computing resources in order to make their solutions feasible and economically attractive for Utility customers. This reference kit implementation provides performance-optimized guide around utility asset maintenance use cases that can be easily scaled across similar use cases.
+
+
+## Learn More
+For more information about Predictive Health Analytics or to read about other relevant workflow examples, see these guides and software resources:
+
+- [Intel® AI Analytics Toolkit (AI Kit)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html)
+- [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z)
+- [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html)
+- [XGBoost Documentation](https://xgboost.readthedocs.io/en/stable/)
+- [Fast, Scalable and Easy Machine Learning With DAAL4PY](https://intelpython.github.io/daal4py/)
+
+## Support
+
+The End-to-end Predictive Health Analytics team tracks both bugs and
+enhancement requests using [GitHub
+issues](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics/issues).
+Before submitting a suggestion or bug report, search the [DLSA GitHub
+issues](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics/issues) to
+see if your issue has already been reported.
+
+## Appendix
+
+\*Other names and brands that may be claimed as the property of others. [Trademarks](https://www.intel.com/content/www/us/en/legal/trademarks.html).
