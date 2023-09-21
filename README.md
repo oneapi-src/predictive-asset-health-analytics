@@ -375,7 +375,7 @@ Predictive asset maintenance solutions of huge scale typically require accelerat
 
 
 ## Learn More
-For more information about Predictive Health Analytics or to read about other relevant workflow examples, see these guides and software resources:
+For more information about Predictive Asset Maintenance or to read about other relevant workflow examples, see these guides and software resources:
 
 - [Intel® AI Analytics Toolkit (AI Kit)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html)
 - [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z)
@@ -385,7 +385,7 @@ For more information about Predictive Health Analytics or to read about other re
 
 ## Support
 
-The End-to-end Predictive Health Analytics team tracks both bugs and
+The End-to-end Predictive Asset Maintenance team tracks both bugs and
 enhancement requests using [GitHub
 issues](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics/issues).
 Before submitting a suggestion or bug report, search the [DLSA GitHub
@@ -394,4 +394,4 @@ see if your issue has already been reported.
 
 ## Appendix
 
-\*Other names and brands that may be claimed as the property of others. [Trademarks](https://www.intel.com/content/www/us/en/legal/trademarks.html).
+\*Names and brands that may be claimed as the property of others. [Trademarks](https://www.intel.com/content/www/us/en/legal/trademarks.html).
