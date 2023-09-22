@@ -51,9 +51,9 @@ The below diagram presents the different stages that compose the end-to-end work
 ## Get Started
 Start by defining an environment variable that will store the workspace path, these directories will be created in further steps and will be used for all the commands executed using absolute paths. Define `DIR` by setting the ENVVAR to the desired directory where the `WORKSPACE` will be stored.
 
+[//]: # (capture: baremetal)
 ```bash
-export DIR=</path/to/myworkspace/directory>
-export WORKSPACE=$DIR/predictive-health-analytics
+export WORKSPACE=$PWD/predictive-health-analytics
 export DATA_DIR=$WORKSPACE/data
 export OUTPUT_DIR=$WORKSPACE/output
 ```
@@ -62,9 +62,17 @@ Create a working directory for the workflow and clone the [Main
 Repository](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) repository into your working
 directory.
 
+[//]: # (capture: baremetal)
 ```bash
 mkdir -p $WORKSPACE && cd $WORKSPACE
+```
+
+```
 git clone https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics.git $WORKSPACE
+```
+
+[//]: # (capture: baremetal)
+```bash
 mkdir -p $DATA_DIR $OUTPUT_DIR/logs
 ```
 ### Set Up Conda
@@ -174,6 +182,7 @@ optional arguments:
 ```
 
 For example, below command should generate the dataset of 25k rows and saves the log file.
+[//]: # (capture: baremetal)
 ```bash
 export DATASIZE=25000
 export OF=$OUTPUT_DIR/logs/logfile_pandas_${DATASIZE}_$(date +%Y%m%d%H%M%S).log 
@@ -200,6 +209,7 @@ optional arguments:
                         changes logging level from INFO to DEBUG
 ```
 For example, below command should take the 25k dataset pkl file generated in the previous example and perform the training and prediction using XGBoost* classifier algorithm.
+[//]: # (capture: baremetal)
 ```bash
 export PACKAGE="pandas"
 export TUNING=0
@@ -223,6 +233,7 @@ optional arguments:
   -d, --debug           changes logging level from INFO to DEBUG
 ```
 Run the following command to train the model with the given dataset, convert the same to daal4py format and measure the prediction time performance.
+[//]: # (capture: baremetal)
 ```bash
 python $WORKSPACE/src/daal_xgb_model.py -f  $DATA_DIR/dataset_${DATASIZE}.pkl
 ```
