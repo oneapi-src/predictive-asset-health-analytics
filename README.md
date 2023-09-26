@@ -49,7 +49,7 @@ The below diagram presents the different stages that compose the end-to-end work
 
 
 ## Get Started
-Start by defining an environment variable that will store the workspace path, these directories will be created in further steps and will be used for all the commands executed using absolute paths. Define `DIR` by setting the ENVVAR to the desired directory where the `WORKSPACE` will be stored.
+Start by defining an environment variable that will store the workspace path, these directories will be created in further steps and will be used for all the commands executed using absolute paths.
 
 [//]: # (capture: baremetal)
 ```bash
