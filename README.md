@@ -182,6 +182,7 @@ optional arguments:
 ```
 
 For example, below command should generate the dataset of 25k rows and saves the log file.
+
 [//]: # (capture: baremetal)
 ```bash
 export DATASIZE=25000
@@ -209,6 +210,7 @@ optional arguments:
                         changes logging level from INFO to DEBUG
 ```
 For example, below command should take the 25k dataset pkl file generated in the previous example and perform the training and prediction using XGBoost* classifier algorithm.
+
 [//]: # (capture: baremetal)
 ```bash
 export PACKAGE="pandas"
@@ -233,6 +235,7 @@ optional arguments:
   -d, --debug           changes logging level from INFO to DEBUG
 ```
 Run the following command to train the model with the given dataset, convert the same to daal4py format and measure the prediction time performance.
+
 [//]: # (capture: baremetal)
 ```bash
 python $WORKSPACE/src/daal_xgb_model.py -f  $DATA_DIR/dataset_${DATASIZE}.pkl
