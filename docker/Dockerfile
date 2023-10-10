@@ -4,12 +4,14 @@ FROM ${BASE_NAME}:${BASE_TAG} as devkitminimal
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends --fix-missing \
-    gcc \
-    git \
-    wget \
-    libgl1 \
-    libglib2.0-0 \
-    numactl
+    gcc=4:10.2.1-1 \
+    git=1:2.30.2-1+deb11u2 \
+    wget=1.21-1+deb11u1 \
+    libgl1=1.3.2-1 \
+    libglib2.0-0=2.66.8-1 \
+    numactl=2.0.12-1+b1 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"] 
 
@@ -28,8 +30,7 @@ FROM devkitminimal as predictive_maintenance
 WORKDIR /workspace
 COPY env env
 COPY docker/envinstall_all.sh envinstall_all.sh
-RUN bash envinstall_all.sh
-
-RUN sed -i "s/conda\ activate\ base/conda\ activate\ predictive_maintenance_intel/" ~/.bashrc
-RUN groupadd -r user && useradd -r -g user -m user 
+RUN bash envinstall_all.sh \
+    && sed -i "s/conda\ activate\ base/conda\ activate\ predictive_maintenance_intel/" ~/.bashrc \
+    && groupadd -r user && useradd -r -g user -m user 
 USER $USER
