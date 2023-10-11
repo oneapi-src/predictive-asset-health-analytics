@@ -1,4 +1,4 @@
-# XGBoost* Predictive Asset Maintenance
+# Predictive Asset Health Analytics
 
 ## Introduction
 Create an end-to-end predictive asset maintenance solution to predict defects and anomalies before they happen with XGBoost* from [Intel® oneAPI AI Analytics Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html) (oneAPI). Check out more workflow examples in the [Developer Catalog](https://developer.intel.com/aireferenceimplementations).
@@ -25,7 +25,7 @@ The solution contained in this repo uses the following Intel® packages:
 
     Modin* is a drop-in replacement for pandas, enabling data scientists to scale to distributed DataFrame processing without having to change API code. [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html) adds optimizations to further accelerate processing on Intel hardware.
 
-For more details, visit [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z), [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html), the [XGBoost* Predictive Asset Maintenance](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) GitHub repository, the [XGBoost* documentation webpage](https://xgboost.readthedocs.io/en/stable/) and the [daal4py documentation webpage](https://intelpython.github.io/daal4py/).
+For more details, visit [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z), [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html), the [Predictive Asset Health Analytics](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) GitHub repository, the [XGBoost* documentation webpage](https://xgboost.readthedocs.io/en/stable/) and the [daal4py documentation webpage](https://intelpython.github.io/daal4py/).
 
 ## Validated Hardware Details 
 
@@ -389,7 +389,7 @@ Predictive asset maintenance solutions of huge scale typically require accelerat
 
 
 ## Learn More
-For more information about Predictive Asset Maintenance or to read about other relevant workflow examples, see these guides and software resources:
+For more information about predictive asset maintenance or to read about other relevant workflow examples, see these guides and software resources:
 
 - [Intel® AI Analytics Toolkit (AI Kit)](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html)
 - [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z)
@@ -399,7 +399,7 @@ For more information about Predictive Asset Maintenance or to read about other r
 
 ## Support
 
-The End-to-end Predictive Asset Maintenance team tracks both bugs and
+The End-to-end Predictive Asset Health Analytics team tracks both bugs and
 enhancement requests using [GitHub
 issues](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics/issues).
 Before submitting a suggestion or bug report, search the [DLSA GitHub

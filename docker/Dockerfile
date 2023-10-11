@@ -1,3 +1,6 @@
+# Copyright (C) 2023 Intel Corporation
+# SPDX-License-Identifier: BSD-3-Clause
+
 ARG BASE_NAME=continuumio/miniconda3
 ARG BASE_TAG=22.11.1
 FROM ${BASE_NAME}:${BASE_TAG} as devkitminimal

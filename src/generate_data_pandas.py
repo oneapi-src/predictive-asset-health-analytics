@@ -1,8 +1,8 @@
-# Copyright (C) 2022 Intel Corporation
+# Copyright (C) 2023 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
 '''
-Module to generate dataset for Predictive Asset Maintenance
+Module to generate dataset for Predictive Asset Health Analytics
 '''
 # !/usr/bin/env python
 # coding: utf-8
