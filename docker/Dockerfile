@@ -7,12 +7,12 @@ FROM ${BASE_NAME}:${BASE_TAG} as devkitminimal
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends --fix-missing \
-    gcc=4:10.2.1-1 \
-    git=1:2.30.2-1+deb11u2 \
-    wget=1.21-1+deb11u1 \
-    libgl1=1.3.2-1 \
-    libglib2.0-0=2.66.8-1 \
-    numactl=2.0.12-1+b1 \
+    gcc \
+    git \
+    wget \
+    libgl1 \
+    libglib2.0-0 \
+    numactl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
