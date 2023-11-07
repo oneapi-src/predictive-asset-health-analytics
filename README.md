@@ -114,11 +114,10 @@ conda activate predictive_maintenance_intel
 You can execute the references pipelines using the following environments:
 * Bare Metal
 * Jupyter Notebook
-* Docker*
 
 ---
+
 ### Run Using Bare Metal
-Follow these instructions to set up and run this workflow on your own development system. For running a provided Docker* image with Docker*, see the [Docker* instructions](#run-using-docker)
 
 #### Set Up System Software
 Our examples use the `conda` package and environment on your local computer. If you don't already have `conda` installed or the `conda` environment created, go to [Set Up Conda*](#set-up-conda) or see the [Conda* Linux installation instructions](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html).
@@ -267,70 +266,6 @@ Open Jupyter Notebook in a web browser, select `PredictiveMaintenance.ipynb` and
 
 #### Clean Up Jupyter Notebook
 To clean Jupyter Notebook follow the instructions described in [Clean Up Bare Metal](#clean-up-bare-metal).
-
----
-### Run Using Docker*
-Follow these instructions to set up and run our provided Docker* image.
-For running on bare metal, see the [bare metal instructions](#run-using-bare-metal)
-instructions.
-
-#### Set Up Docker Engine*
-You'll need to install **Docker Engine*** on your development system.
-Note that while **Docker Engine*** is free to use, **Docker Desktop*** may require
-you to purchase a license.  See the [Docker Engine Server* installation
-instructions](https://docs.docker.com/engine/install/#server) for details.
-
-#### Setup Docker* Compose
-Ensure you have Docker compose* installed on your machine. If you don't have this tool installed, consult the official [Docker* compose installation documentation](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually).
-
-```bash
-DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
-mkdir -p $DOCKER_CONFIG/cli-plugins
-curl -SL https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
-chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
-docker compose version
-```
-
-#### Set Up and Run Docker* Image
-In `docker` folder, there is a docker-compose file to build a container quickly and easily with everything necessary to be able to build Docker* containers. The following commands will build (if not already built) the Docker* containers and images declared in the compose file. Once the building process has ended, Docker* compose will run a container with an interactive shell session. Before trying to build the containers set the ENVVARS described in [Get Started](#get-started).
-```bash 
-cd $WORKSPACE/docker
-docker compose -p $USER build
-docker compose -p $USER run interactive
-```
-Once inside the interactive shell session, the user can run the commands described in [Run Using Bare Metal](#run-using-bare-metal).
-
-#### Run Jupyter Notebook Server
-To connect to a Jupyter Notebook server and run our demonstrative notebook, build (if not already built) and run the provided Docker* image, as shown below. Before trying to build the containers set the ENVVARS described in [Get Started](#get-started) if the default exposed port needs to be changed, set the ENVVAR `PORT` to another value.
-```bash 
-cd $WORKSPACE/docker
-export PORT=8888
-docker compose -p $USER build
-docker compose -p $USER up jupyter_server
-```
-
-
-The output will be like:
-
-```bash
-To access the notebook, open this file in a browser:
-   file:///path/to/jupyter/notebook/server/open.html 
-Or copy and paste one of these URLs: 
-   http://*********:8888/?token=***************************************** 
-or http://127.0.0.1:8888/?token=*****************************************
-```
-
-Copy and paste the complete URL that starts with `http://127.0.0.1:8888` into a web browser to open the Jupyter Notebook Dashboard.
-
-Once in Jupyter, click on *`PredictiveMaintenance.ipynb`* to get an interactive demo of the workflow. Select conda `env:predictive_maintenance_intel` as the jupyter kernel. Now you can follow the notebook's instructions step by step.
-
-#### Clean Up Docker Containers*
-Stop containers created by Docker* compose and remove them.
-
-```bash
-cd $WORKSPACE/docker
-docker compose -p $USER down --remove-orphans
-```
 
 ## Expected Output
 A successful execution of ```generate_data_pandas.py``` should return similar results as shown below:
