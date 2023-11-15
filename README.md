@@ -25,7 +25,7 @@ The solution contained in this repo uses the following Intel® packages:
 
     Modin* is a drop-in replacement for pandas, enabling data scientists to scale to distributed DataFrame processing without having to change API code. [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html) adds optimizations to further accelerate processing on Intel hardware.
 
-For more details, visit [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z), [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html), the [Predictive Asset Health Analytics](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) GitHub repository, the [XGBoost* documentation webpage](https://xgboost.readthedocs.io/en/stable/) and the [daal4py documentation webpage](https://intelpython.github.io/daal4py/).
+For more details, visit [Intel® Distribution for Python*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html#gs.52te4z), [Intel® Distribution of Modin*](https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-of-modin.html), the [Predictive Asset Health Analytics](https://github.com/oneapi-src/predictive-asset-health-analytics) GitHub repository, the [XGBoost* documentation webpage](https://xgboost.readthedocs.io/en/stable/) and the [daal4py documentation webpage](https://intelpython.github.io/daal4py/).
 
 ## Validated Hardware Details 
 
@@ -59,7 +59,7 @@ export OUTPUT_DIR=$WORKSPACE/output
 ```
 ### Download the Workflow Repository
 Create a working directory for the workflow and clone the [Main
-Repository](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics) repository into your working
+Repository](https://github.com/oneapi-src/predictive-asset-health-analytics) repository into your working
 directory.
 
 [//]: # (capture: baremetal)
@@ -68,7 +68,7 @@ mkdir -p $WORKSPACE && cd $WORKSPACE
 ```
 
 ```
-git clone https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics.git $WORKSPACE
+git clone https://github.com/oneapi-src/predictive-asset-health-analytics.git $WORKSPACE
 ```
 
 [//]: # (capture: baremetal)
@@ -336,9 +336,9 @@ For more information about predictive asset maintenance or to read about other r
 
 The End-to-end Predictive Asset Health Analytics team tracks both bugs and
 enhancement requests using [GitHub
-issues](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics/issues).
+issues](https://github.com/oneapi-src/predictive-asset-health-analytics/issues).
 Before submitting a suggestion or bug report, search the [DLSA GitHub
-issues](https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.predictive-health-analytics/issues) to
+issues](https://github.com/oneapi-src/predictive-asset-health-analytics/issues/issues) to
 see if your issue has already been reported.
 
 ## Appendix
