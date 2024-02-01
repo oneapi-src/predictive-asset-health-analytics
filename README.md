@@ -3,6 +3,25 @@
 ## Introduction
 Create an end-to-end predictive asset maintenance solution to predict defects and anomalies before they happen with XGBoost* from [Intel® oneAPI AI Analytics Toolkit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ai-analytics-toolkit.html) (oneAPI). Check out more workflow examples in the [Developer Catalog](https://developer.intel.com/aireferenceimplementations).
 
+## **Table of Contents**
+
+- [Solution Technical Overview](#solution-technical-overview)
+- [Validated Hardware Details](#validated-hardware-details)
+- [How it Works?](#how-it-works)
+- [Get Started](#get-started)
+  - [Download the Workflow Repository](#download-the-workflow-repository)
+  - [Set Up Conda](#set-up-conda)
+  - [Set Up Environment](#set-up-environment)
+- [Ways to run this reference use case](#Ways-to-run-this-reference-use-case)
+  - [Run Using Bare Metal](#run-using-bare-metal)
+  - [Run Using Jupyter Notebook](#run-using-jupyter-notebook)
+- [Expected Output](#expected-output)
+- [Summary and Next Steps](#summary-and-next-steps)
+- [Learn More](#learn-more)
+- [Support](#support)
+- [Appendix](#appendix)
+
+
 ## Solution Technical Overview
 
 Predictive asset maintenance is a method that uses data analysis tools to predict defects and anomalies before they happen. Solutions of huge scale typically require operating across multiple hardware architectures. Accelerating training for the ever-increasing size of datasets and machine learning models is a major challenge while adopting AI (Artificial Intelligence).
@@ -87,20 +106,13 @@ The conda yaml dependencies are kept in `$WORKSPACE/env/intel_env.yml`.
 
 | **Packages required in YAML file:**                 | **Version:**
 | :---                          | :--
-| `python`  | 3.9
-| `intelpython3_full`  | 2023.2.0 
-| `modin-all`  | 0.23.0
+| `python`  | 3.10
+| `intelpython3_full`  | 2024.0.0
+| `modin-all`  | 0.24.1
 
 Follow the next steps for Intel® Python* Distribution setup inside conda environment:
 ```bash
-# If the user wants to set libmamba as conda's default solver 
-# for base environment, run the following two lines; if not
-# continue executing from to line number 3. Newer versions of 
-# Anaconda have libmamba already installed and will be the default
-# solver in September 2023.
-conda install -n base conda-libmamba-solver
-conda config --set solver libmamba
-conda env create -f $WORKSPACE/env/intel_env.yml
+conda env create -f $WORKSPACE/env/intel_env.yml --no-default-packages
 ```
 
 Environment setup is required only once. This step does not cleanup the existing environment with the same name; make sure no conda environment exists with the same name. During this setup a new conda environment will be created with the dependencies listed in the YAML configuration.
@@ -110,7 +122,7 @@ Once the appropriate environment is created with the previous step then it has t
 conda activate predictive_maintenance_intel
 ```
 
-## Supported Runtime Environment
+## Ways to run this reference use case
 You can execute the references pipelines using the following environments:
 * Bare Metal
 * Jupyter Notebook
@@ -217,7 +229,7 @@ export TUNING=0
 export NCPU=20
 export CROSS_VAL=4
 export OF=$OUTPUT_DIR/logs/logfile_train_predict_${DATASIZE}_$(date +%Y%m%d%H%M%S).log 
-python $WORKSPACE/src/train_predict_pam.py -f $DATA_DIR/dataset_${DATASIZE}.pkl -t $TUNING -ncpu $NCPU -p $PACKAGE -cv $CROSS_VAL | tee -a $OF 
+python $WORKSPACE/src/train_predict_pam.py -f $DATA_DIR/dataset_${DATASIZE}.pkl -t $TUNING -ncpu $NCPU -p $PACKAGE -cv $CROSS_VAL 2>&1  | tee -a $OF 
 echo "Logfile saved: $OF"
 ```
 
@@ -252,15 +264,15 @@ rm $OUTPUT_DIR $DATA_DIR $WORKSPACE -rf
 Before continuing steps described in [Get Started](#get-started).
 
 #### Create and activate conda environment
-To be able to run `Fraud_Detection_Notebook.ipynb` a conda environment must be created:
+To be able to run `Fraud_Detection_Notebook.ipynb` a [conda environment](#set-up-environment) must be created:
 ```bash
 conda activate predictive_maintenance_intel
-conda install -c intel nb_conda_kernels jupyter notebook -y
+conda install -c intel -c conda-forge nb_conda_kernels jupyterlab -y
 ```
 Follow the steps in [Get Started](#get-started) section before continuing. Run the following command inside of the project root directory. ENVVARs must be set in the same terminal that will run Jupyter Notebook.
 ```bash
 cd $WORKSPACE
-jupyter notebook
+jupyter lab
 ```
 Open Jupyter Notebook in a web browser, select `PredictiveMaintenance.ipynb` and select `conda env:predictive_maintenance_intel` as the jupyter kernel. Now you can follow the notebook's instructions step by step.
 
