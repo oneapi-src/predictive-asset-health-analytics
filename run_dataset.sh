@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2023 Intel Corporation
+# Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
 [[ -z "$WORKSPACE" ]] && { echo "Error: \$WORKSPACE not declared"; exit 1; }
